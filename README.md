@@ -23,6 +23,43 @@ SharePoint/OneDrive  ←→  GitHub Repository  ←→  Google Drive
    Windows Reverse                             macOS Reverse
 ```
 
+## 🗂️ Setting Up a New Project
+
+This repository is a **GitHub template**. For each project, create a dedicated private repo from it — synced files commit into the project repo, keeping this tool repo clean and reusable.
+
+### 1. Create a project repo from this template
+
+1. Click **"Use this template"** → **"Create a new repository"** on the [sharepoint-gdrive-sync](https://github.com/lhamoudi/sharepoint-gdrive-sync) repo page
+2. Name it after your project (e.g., `acme-project-sync`), set visibility to **Private**
+3. Clone it on both your Windows and macOS machines
+
+### 2. Set up Git LFS (recommended for large files)
+
+If your project syncs large files — recordings, Visio diagrams, ZIP archives — enable Git LFS in the project repo before your first sync:
+
+```bash
+# Install Git LFS (once per machine)
+git lfs install
+
+# Track large file types (add/remove types to suit your project)
+git lfs track "*.mp4" "*.mov" "*.avi" "*.wmv"
+git lfs track "*.zip" "*.rar" "*.7z" "*.tar.gz"
+git lfs track "*.vsd" "*.vsdx" "*.psd"
+
+# Commit the .gitattributes file created by the above commands
+git add .gitattributes
+git commit -m "Configure Git LFS tracking"
+git push
+```
+
+> **Note**: GitHub's free LFS quota is 1 GB storage / 1 GB bandwidth per month. Check your account's usage if you're syncing large volumes.
+
+### 3. Run the scripts
+
+Point the scripts at your project repo's local clone as the destination (Windows) or source (macOS). See **Quick Start** below for examples.
+
+---
+
 ## 🚀 Quick Start
 
 ### Forward Sync: SharePoint → Google Drive
@@ -265,12 +302,14 @@ If conflicts occur:
 - Git installed and configured
 - Access to OneDrive/SharePoint with project folder
 - GitHub repository with push permissions
+- [Git LFS](https://git-lfs.com) (optional, for large file types)
 
 ### macOS
 - Bash shell
 - Git installed and configured
 - Google Drive mounted and accessible
 - GitHub repository with pull permissions
+- [Git LFS](https://git-lfs.com) (optional, for large file types)
 
 ## 💡 Common Usage Patterns
 
