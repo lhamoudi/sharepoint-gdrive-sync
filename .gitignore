@@ -1,0 +1,27 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+desktop.ini
+Thumbs.db
+ehthumbs.db
+
+# Secrets — never commit credentials or API keys
+*.postman_collection.json
+*.postman_environment.json
+.env
+.env.*
+*.pem
+*.key
+*.p12
+*.pfx
+id_rsa
+id_rsa.*
+id_ed25519
+id_ed25519.*
+
+# Synced content folders (these are not part of the tool itself)
+GDrive Sync/
+Voice Ops & Engineering*/
