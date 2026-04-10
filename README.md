@@ -45,6 +45,7 @@ git lfs install
 git lfs track "*.mp4" "*.mov" "*.avi" "*.wmv"
 git lfs track "*.zip" "*.rar" "*.7z" "*.tar.gz"
 git lfs track "*.vsd" "*.vsdx" "*.psd"
+git lfs track "*.xlsx" "*.xlsm" "*.docx" "*.pptx" "*.pdf"
 
 # Commit the .gitattributes file created by the above commands
 git add .gitattributes
