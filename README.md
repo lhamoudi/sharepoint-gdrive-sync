@@ -375,6 +375,20 @@ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 - Check repository permissions
 - Ensure you're in the correct Git repository
 
+**`error: RPC failed; HTTP 400` on push**:
+This usually means the HTTP buffer is too small for a large pack of binary files (`.xlsx`, `.docx`, `.pptx`, `.pdf`, etc.). Increase the buffer and retry:
+```bash
+git config http.postBuffer 524288000
+git push
+```
+If pushes continue to fail, the long-term fix is to route those file types through Git LFS so they're uploaded separately rather than packed together. Add them to LFS tracking:
+```bash
+git lfs track "*.xlsx" "*.xlsm" "*.docx" "*.pptx" "*.pdf"
+git add .gitattributes
+git commit -m "Track Office and PDF files with LFS"
+```
+Note that files already committed to regular git history must be migrated with `git lfs migrate import` — adding the tracking rule only applies to future commits.
+
 ### macOS Issues
 
 **"Permission Denied"**:
