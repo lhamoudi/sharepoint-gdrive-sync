@@ -22,6 +22,3 @@ id_rsa.*
 id_ed25519
 id_ed25519.*
 
-# Synced content folders (these are not part of the tool itself)
-GDrive Sync/
-Voice Ops & Engineering*/
