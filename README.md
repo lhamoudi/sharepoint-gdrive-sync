@@ -16,11 +16,31 @@ This toolkit provides **four automated sync solutions** for complete bidirection
 
 ## 🔄 Bidirectional Workflow
 
-```
-SharePoint/OneDrive  ←→  GitHub Repository  ←→  Google Drive
-        ↑                      ↑                    ↑
-   Windows Forward        Central Hub          macOS Forward
-   Windows Reverse                             macOS Reverse
+```mermaid
+flowchart LR
+    SP["SharePoint / OneDrive"]
+    GH["GitHub Repository\n(central hub)"]
+    GD["Google Drive"]
+
+    subgraph win["Windows Machine"]
+        WF["windows_sync_loop.ps1\n(forward)"]
+        WR["windows_reverse_sync_loop.ps1\n(reverse)"]
+    end
+
+    subgraph mac["macOS Machine"]
+        MF["osx_sync_loop.sh\n(forward)"]
+        MR["osx_reverse_sync_loop.sh\n(reverse)"]
+    end
+
+    SP -->|"reads files"| WF
+    WF -->|"git commit + push"| GH
+    GH -->|"git pull"| MF
+    MF -->|"rsync"| GD
+
+    GD -->|"rsync"| MR
+    MR -->|"git commit + push"| GH
+    GH -->|"git pull"| WR
+    WR -->|"writes files"| SP
 ```
 
 ## 🗂️ Setting Up a New Project
