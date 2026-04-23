@@ -215,10 +215,17 @@ function Commit-AndPush {
     }
 
     try {
+        # Pull latest remote changes before committing to reduce push conflicts
+        Write-Host "Pulling latest changes from remote..." -ForegroundColor Gray
+        git pull --rebase
+        if ($LASTEXITCODE -ne 0) {
+            Write-Host "WARNING: git pull failed, continuing with push attempt" -ForegroundColor Yellow
+        }
+
         # Check git status
         Write-Host "Checking repository status..." -ForegroundColor Gray
         $status = git status --porcelain
-        
+
         if (-not $status) {
             Write-Host "No changes to commit." -ForegroundColor Green
             return $true
@@ -226,7 +233,7 @@ function Commit-AndPush {
 
         Write-Host "Changes detected, staging files..." -ForegroundColor Gray
         git add --all
-        
+
         if ($LASTEXITCODE -ne 0) {
             Write-Host "ERROR: Failed to stage files" -ForegroundColor Red
             return $false
@@ -234,7 +241,7 @@ function Commit-AndPush {
 
         Write-Host "Committing changes..." -ForegroundColor Gray
         git commit -m $Message
-        
+
         if ($LASTEXITCODE -ne 0) {
             Write-Host "ERROR: Failed to commit changes" -ForegroundColor Red
             return $false
@@ -242,15 +249,24 @@ function Commit-AndPush {
 
         Write-Host "Pushing to remote repository..." -ForegroundColor Gray
         git push
-        
+
         if ($LASTEXITCODE -ne 0) {
-            Write-Host "ERROR: Failed to push to remote" -ForegroundColor Red
-            return $false
+            Write-Host "Push rejected - pulling remote changes and retrying..." -ForegroundColor Yellow
+            git pull --rebase
+            if ($LASTEXITCODE -ne 0) {
+                Write-Host "ERROR: Failed to pull before retry" -ForegroundColor Red
+                return $false
+            }
+            git push
+            if ($LASTEXITCODE -ne 0) {
+                Write-Host "ERROR: Failed to push to remote" -ForegroundColor Red
+                return $false
+            }
         }
 
         Write-Host "Changes successfully pushed to GitHub." -ForegroundColor Green
         return $true
-        
+
     } catch {
         Write-Host "ERROR: Git operation failed: $($_.Exception.Message)" -ForegroundColor Red
         return $false

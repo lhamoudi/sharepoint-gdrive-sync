@@ -190,6 +190,13 @@ perform_reverse_sync() {
     echo "Step 2: Committing and pushing changes to GitHub..."
     echo ""
 
+    # Pull latest remote changes before committing to reduce push conflicts
+    echo "Pulling latest changes from remote..."
+    if ! git pull --rebase; then
+        echo "WARNING: git pull failed, continuing with push attempt"
+    fi
+    echo ""
+
     # Create commit message with timestamp if none provided
     if [ -z "$COMMIT_MESSAGE" ]; then
         COMMIT_MESSAGE="Update files from Google Drive - $(date '+%Y-%m-%d %H:%M:%S')"
@@ -225,6 +232,17 @@ perform_reverse_sync() {
 
         echo "Pushing to remote repository..."
         if git push; then
+            PUSH_OK=true
+        else
+            echo "Push rejected - pulling remote changes and retrying..."
+            if git pull --rebase && git push; then
+                PUSH_OK=true
+            else
+                PUSH_OK=false
+            fi
+        fi
+
+        if [ "$PUSH_OK" = true ]; then
             echo ""
             echo "========================================"
             echo "Reverse sync completed successfully!"
